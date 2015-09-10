@@ -14,6 +14,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   randomSeed(analogRead(0));
   strip.begin();
+  strip.setBrightness(64);
 }
 
 void loop() {
