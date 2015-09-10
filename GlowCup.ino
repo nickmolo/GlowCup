@@ -24,7 +24,7 @@ void loop() {
 
 static void twinkle(uint32_t c){
   for(uint16_t i=0; i <strip.numPixels(); i++){
-    if(random(0,10) >= 8){
+    if(random(0,10) >= 6){
       strip.setPixelColor(i,random(0,255), random(0,255), random(0,255));
     }else{
       strip.setPixelColor(i,0);
