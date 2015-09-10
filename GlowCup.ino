@@ -14,7 +14,7 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   randomSeed(analogRead(0));
   strip.begin();
-  strip.setBrightness(64);
+  //strip.setBrightness(64);
 }
 
 void loop() {
@@ -25,7 +25,7 @@ void loop() {
 static void twinkle(uint32_t c){
   for(uint16_t i=0; i <strip.numPixels(); i++){
     if(random(0,10) >= 6){
-      strip.setPixelColor(i,random(0,255), random(0,255), random(0,255));
+      setLedColorHSV(random(0, 360), (double) (random(75, 100)/100.0), .25, i);
     }else{
       strip.setPixelColor(i,0);
     }
@@ -34,7 +34,7 @@ static void twinkle(uint32_t c){
   }
 }
 
-void setLedColorHSV(int h, double s, double v) {
+void setLedColorHSV(int h, double s, double v, int index) {
   //this is the algorithm to convert from RGB to HSV
   double r=0; 
   double g=0; 
@@ -87,7 +87,7 @@ void setLedColorHSV(int h, double s, double v) {
   int green=constrain((int)255*g,0,255);
   int blue=constrain((int)255*b,0,255);
 
- // setLedColor(red,green,blue);
+  strip.setPixelColor(index, red, green, blue);
 }
 
 
