@@ -5,6 +5,8 @@
 #include <Adafruit_NeoPixel.h>
 
 #define PIN      6
+#define SWITCH   4
+
 #define N_LEDS 90
 
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LEDS, PIN, NEO_GRB + NEO_KHZ800);
@@ -14,24 +16,53 @@ Adafruit_NeoPixel strip = Adafruit_NeoPixel(N_LEDS, PIN, NEO_GRB + NEO_KHZ800);
 void setup() {
   randomSeed(analogRead(0));
   strip.begin();
-  //strip.setBrightness(64);
+  strip.setBrightness(64);
 }
 
 void loop() {
-  twinkle(strip.Color(random(0,255), random(0,255), random(0,255)));
+  if(digitalRead(SWITCH) ==  LOW){
+    twinkle(strip.Color(random(0,255), random(0,255), random(0,255)));
+  }else{
+    rainbowCycle(1);
+  }
 }
 
+// Slightly different, this makes the rainbow equally distributed throughout
+void rainbowCycle(uint8_t wait) {
+  uint16_t i, j;
+
+  for(j=0; j<256*2; j++) { // 5 cycles of all colors on wheel
+    for(i=0; i< strip.numPixels(); i++) {
+      strip.setPixelColor(i, Wheel(((i * 256 / strip.numPixels()) + j) & 255));
+    }
+    strip.show();
+    delay(wait);
+  }
+}
+
+uint32_t Wheel(byte WheelPos) {
+  WheelPos = 255 - WheelPos;
+  if(WheelPos < 85) {
+    return strip.Color(255 - WheelPos * 3, 0, WheelPos * 3);
+  }
+  if(WheelPos < 170) {
+    WheelPos -= 85;
+    return strip.Color(0, WheelPos * 3, 255 - WheelPos * 3);
+  }
+  WheelPos -= 170;
+  return strip.Color(WheelPos * 3, 255 - WheelPos * 3, 0);
+}
 
 static void twinkle(uint32_t c){
   for(uint16_t i=0; i <strip.numPixels(); i++){
-    if(random(0,10) >= 6){
-      setLedColorHSV(random(0, 360), (double) (random(75, 100)/100.0), .25, i);
+    if(random(0,10) >= 3){
+      setLedColorHSV(random(0, 360), (double) (random(75, 100)/100.0), 1, i);
     }else{
       strip.setPixelColor(i,0);
     }
-    strip.show();
-    //delay(25);
   }
+  delay(50);
+  strip.show();
 }
 
 void setLedColorHSV(int h, double s, double v, int index) {
